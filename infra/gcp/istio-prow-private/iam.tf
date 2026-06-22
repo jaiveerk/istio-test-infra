@@ -13,6 +13,10 @@ module "prowjob_private_account" {
     { bucket = google_storage_bucket.istio_build_private.name, role = "roles/storage.objectAdmin" },
     { bucket = google_storage_bucket.istio_prerelease_private.name, role = "roles/storage.objectAdmin" },
   ]
+  secrets = [
+    { name = "cf_r2_istio-prerelease-private_credentials", project = "istio-testing" },
+    { name = "cf_r2_istio-build-private_credentials", project = "istio-testing" },
+  ]
   prowjob        = true
   prowjob_bucket = "istio-prow-private"
 }
@@ -63,7 +67,7 @@ resource "google_project_iam_member" "owners" {
 module "kubernetes_external_secrets_account" {
   source            = "../modules/workload-identity-service-account"
   project_id        = local.project_id
-  name              = "kubernetes-external-secrets-sa-private"
+  name              = "k8s-external-secrets-sa-priv"  # GCP SAs have a 30 character limit, so we need to abbreviate.
   description       = "Service account used by kubernetes-external-secrets operator on the private clusters."
   cluster_namespace = "default"
   secrets = [
